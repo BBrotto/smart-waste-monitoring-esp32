@@ -1,7 +1,7 @@
 # Sistema de Monitoramento Inteligente de Resíduos Urbanos
-**Universidade Presbiteriana Mackenzie — Faculdade de Computação e Informática**  
+**Universidade Presbiteriana Mackenzie**  
 Autoras: Bianca Maciel Alaunes Brotto, Seyedehzahra Mousavi  
-Disciplina: Internet das Coisas (IoT)
+
 
 ---
 
@@ -13,17 +13,40 @@ Sistema embarcado para monitoramento do nível de preenchimento de lixeiras urba
 
 ## Como reproduzir
 
-### Simulação online (Wokwi)
-1. Acesse o projeto simulado: https://wokwi.com/projects/465559332045602817
-2. Clique em ▶️ Play para iniciar a simulação
-3. O ESP32 irá conectar ao Wi-Fi (Wokwi-GUEST) e ao broker MQTT automaticamente
+### ⚠️ Importante: dois ambientes de simulação
 
-### Hardware físico
-1. Monte o circuito conforme a seção de hardware abaixo
-2. Abra o arquivo `src/sketch.ino` na Arduino IDE
-3. Instale as bibliotecas: `PubSubClient` e `ArduinoJson`
-4. Configure suas credenciais Wi-Fi nas linhas 24–25
-5. Faça o upload para o ESP32
+Este projeto utiliza dois ambientes distintos:
+
+| Ambiente | Uso | API LEDC |
+|---|---|---|
+| **Wokwi VS Code** (recomendado) | Simulação com MQTT real | `ledcSetup` / `ledcAttachPin` (core v2) |
+| **Wokwi Online** (referência visual) | Visualização do circuito | `ledcAttach` / `ledcDetach` (core v3+) |
+
+O código em `src/sketch.ino` é compatível com o **Wokwi VS Code via PlatformIO**, que utiliza o ESP32 Arduino Core v2. O link do Wokwi online abaixo serve apenas para visualização do diagrama do circuito.
+
+### Simulação com Wokwi + VS Code (recomendado)
+
+1. Instale o [Visual Studio Code](https://code.visualstudio.com/)
+2. Instale as extensões **PlatformIO IDE** e **Wokwi Simulator**
+3. Clone ou baixe este repositório
+4. Abra a pasta no VS Code (**File → Open Folder**)
+5. Abra o terminal PlatformIO e compile: `pio run`
+6. Inicie a simulação: **Ctrl+Shift+P → Wokwi: Start Simulator**
+7. O ESP32 conectará ao Wi-Fi (Wokwi-GUEST) e ao broker MQTT automaticamente
+
+### Visualização do circuito (Wokwi Online)
+
+Acesse o diagrama do circuito em:  
+https://wokwi.com/projects/465559332045602817
+
+> ⚠️ O código do repositório **não é compatível** com o Wokwi online diretamente, pois utilizam versões diferentes do ESP32 Arduino Core. Use o ambiente VS Code para executar o projeto completo.
+
+### Monitorar mensagens MQTT
+
+1. Acesse: https://www.hivemq.com/demos/websocket-client/
+2. Conecte em `broker.hivemq.com` porta `8884`
+3. Assine o tópico `lixeira/L01/nivel`
+4. As mensagens aparecem automaticamente a cada 2 segundos
 
 ---
 
@@ -43,7 +66,7 @@ Sistema embarcado para monitoramento do nível de preenchimento de lixeiras urba
 ### Mapeamento de pinos
 | Componente | Pino do Componente | Pino ESP32 |
 |---|---|---|
-| HC-SR04 | VCC | VIN (5V) |
+| HC-SR04 | VCC | 5V |
 | HC-SR04 | GND | GND |
 | HC-SR04 | TRIG | GPIO 5 |
 | HC-SR04 | ECHO | GPIO 18 |
@@ -59,10 +82,11 @@ Sistema embarcado para monitoramento do nível de preenchimento de lixeiras urba
 smart-waste-monitoring-esp32/
 ├── src/
 │   └── sketch.ino        # Firmware principal do ESP32
-├── docs/
-│   └── diagrama.png      # Diagrama de montagem do circuito
-├── README.md
-└── libraries.txt         # Bibliotecas necessárias
+├── diagram.json          # Diagrama de montagem do circuito (Wokwi)
+├── platformio.ini        # Configuração do PlatformIO
+├── wokwi.toml            # Configuração do simulador Wokwi
+├── libraries.txt         # Bibliotecas necessárias
+└── README.md
 ```
 
 ### Bibliotecas necessárias
@@ -71,10 +95,10 @@ smart-waste-monitoring-esp32/
 - `ArduinoJson` v6+ — serialização JSON
 
 ### Lógica principal
-1. Conecta ao Wi-Fi e ao broker MQTT
-2. A cada 10 segundos, lê a distância pelo HC-SR04
-3. Calcula o nível de preenchimento: `Nível(%) = ((dist_vazia - dist_medida) / (dist_vazia - dist_cheia)) × 100`
-4. Se nível ≥ 80%: aciona o buzzer passivo (PWM 2kHz, intermitente)
+1. Conecta ao Wi-Fi e ao broker MQTT (não-bloqueante)
+2. A cada 2 segundos, lê a distância pelo HC-SR04
+3. Calcula o nível: `Nível(%) = ((dist_vazia - dist_medida) / (dist_vazia - dist_cheia)) × 100`
+4. Se nível ≥ 80%: aciona o buzzer passivo (PWM 2kHz)
 5. Publica JSON no tópico MQTT `lixeira/L01/nivel`
 6. Aguarda comandos remotos no tópico `lixeira/L01/cmd`
 
@@ -98,15 +122,10 @@ smart-waste-monitoring-esp32/
 {
   "lixeira_id": "L01",
   "nivel_pct": 53,
-  "distancia_cm": 15.0,
+  "distancia_cm": 15,
   "alerta": false
 }
 ```
-
-### Monitorar mensagens
-Acesse o cliente WebSocket do HiveMQ:  
-https://www.hivemq.com/demos/websocket-client/  
-Conecte em `broker.hivemq.com:8884` e assine o tópico `lixeira/L01/nivel`
 
 ---
 
