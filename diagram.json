@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "author": "Bianca Brotto & Seyedehzahra Mousavi - Mackenzie",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": 200,
+      "left": 290,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "ultrassom",
+      "top": 20,
+      "left": 230,
+      "attrs": { "distance": "15" }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "buzzer",
+      "top": 20,
+      "left": 530,
+      "attrs": { "volume": "0.5" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 330,
+      "left": 530,
+      "rotate": 90,
+      "attrs": { "value": "100" }
+    }
+  ],
+  "connections": [
+    ["ultrassom:VCC",  "esp:5V",    "red",    ["v160", "h60"]],
+    ["ultrassom:GND",  "esp:GND.1", "black",  ["v180", "h80"]],
+    ["ultrassom:TRIG", "esp:5",     "green",  ["v140", "h100"]],
+    ["ultrassom:ECHO", "esp:18",    "blue",   ["v120", "h100"]],
+    ["buzzer:1",       "r1:1",      "orange", ["v280"]],
+    ["r1:2",           "esp:23",    "orange", ["h-120"]],
+    ["buzzer:2",       "esp:GND.2", "black",  ["v320", "h-180"]]
+  ],
+  "dependencies": {}
+}
