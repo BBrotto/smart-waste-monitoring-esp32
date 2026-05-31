@@ -1,17 +1,7 @@
 /*
  * Sistema de Monitoramento Inteligente de Resíduos Urbanos
- * Universidade Presbiteriana Mackenzie - FCI
+ * Universidade Presbiteriana Mackenzie
  * Autoras: Bianca Maciel Alaunes Brotto, Seyedehzahra Mousavi
- *
- * Hardware:
- *   - ESP32 DevKit v1
- *   - Sensor ultrassônico HC-SR04 (Trig: GPIO5, Echo: GPIO18)
- *   - Buzzer passivo (GPIO23, via resistor 100 Ω)
- *
- * Comunicação:
- *   - Wi-Fi + MQTT (broker HiveMQ público)
- *   - Tópicos publicados: lixeira/L01/nivel
- *   - Tópico subscrito:   lixeira/L01/cmd  (para comandos remotos)
  */
 
 #include <Arduino.h>
