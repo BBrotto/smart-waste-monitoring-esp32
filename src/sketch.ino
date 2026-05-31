@@ -185,7 +185,4 @@ void loop() {
 
     Serial.println("─────────────────────────────────────");
   }
-  Serial.begin(115200);
-  Serial.println("Hello, I'm in a terminal!");
-  Serial.println();
 }
