@@ -1,0 +1,6 @@
+# Wokwi Library List
+# Gerado para o projeto: Sistema de Monitoramento de Lixeiras - Mackenzie
+ 
+ArduinoJson
+PubSubClient
+ 
